@@ -3,17 +3,17 @@ import logging
 from time import strftime, time, sleep
 from datetime import datetime
 from colorama import init, Fore, Style
-import sched
+from sched import scheduler
 
 process_name = 'D2R.exe'
-update_interval = 1     # refresh rate in seconds
+update_interval = 1     # refresh rate in seconds; setting lower than 1 might be pointless because the process of checking connections takes close to 1s
 logfile = 'D2R_ip_{}.log'.format(strftime('%Y-%m-%d'))
 
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s, %(message)s', datefmt='%Y-%m-%d, %H:%M:%S',
     handlers=[
-        logging.FileHandler(logfile),
+        logging.FileHandler(logfile),   # remove this line to stop logging to a file
         logging.StreamHandler()
     ]
 )
@@ -42,12 +42,12 @@ other = [
 ]
 static_ips = global_client + EU_client + NA_client + Asia_client + other
 
-init()
-s = sched.scheduler(time, sleep)
+init()  # colorama initialisation
+s = scheduler(time, sleep)
 
-last_ip = 0
-the_ip = 0
-last_time = 0
+previous_ip = 0
+current_game_ip = 0
+previous_time = 0
 def print_ip():
     s.enter(update_interval, 1, print_ip)
     d2r_pid = 0
@@ -58,11 +58,11 @@ def print_ip():
     if d2r_pid:
         p = psutil.Process(d2r_pid)
     else:   
-        # game is not running
+        # if game is not running
         return
-    global last_ip
-    global the_ip
-    global last_time
+    global previous_ip
+    global current_game_ip
+    global previous_time
     region = '?'
     for c in p.connections('tcp'):
         if (c.raddr):
@@ -74,16 +74,23 @@ def print_ip():
             if(ip in Asia_client):
                 region = 'Asia'
             if(ip not in static_ips):
-                the_ip = ip
-    if(the_ip!=last_ip):
-        logging.info('{}, {}'.format(region, the_ip))
-        last_ip = the_ip
-        last_time = time()
+                current_game_ip = ip
+    if(current_game_ip!=previous_ip):
+        # we've found a new game ip, log it to file and console
+        logging.info('{}, {}'.format(region, current_game_ip))
+        previous_ip = current_game_ip
+        previous_time = time()
+    # display clock, coloured green if more then 1 minute passed since last game creation:
     msg = datetime.now().strftime('%Y-%m-%d, %H:%M:%S')
-    if last_time>0 and time()-last_time>=60:
-        print(Fore.GREEN + msg + Style.RESET_ALL, end="\r", flush=True)
+    info = ' (press CTRL+C to exit)'
+    if previous_time>0 and time()-previous_time>=60:
+        print(Fore.GREEN + msg + Style.RESET_ALL + info, end="\r", flush=True)
     else:
-        print(msg, end="\r", flush=True)
+        print(msg + info, end="\r", flush=True)
 
 s.enter(0, 1, print_ip)
-s.run()
+try:
+    s.run()
+except KeyboardInterrupt:
+    print()
+    pass
