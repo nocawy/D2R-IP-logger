@@ -5,7 +5,6 @@ from datetime import datetime
 from colorama import init, Fore, Style
 from sched import scheduler
 
-process_name = 'D2R.exe'
 update_interval = 1     # refresh rate in seconds; setting lower than 1 might be pointless because the process of checking connections takes close to 1s
 logfile = 'D2R_ip_{}.log'.format(strftime('%Y-%m-%d'))
 
@@ -21,6 +20,7 @@ logging.basicConfig(
 global_client = [
     '24.105.29.76',     # client
     '34.117.122.6',     # client
+    '127.0.0.1',        # localhost
 ]
 EU_client = [
     '37.244.28.80',     # EU client
@@ -37,10 +37,6 @@ Asia_client = [
     '117.52.35.79',     # Asia client
     '117.52.35.179',    # Asia client
 ]
-other = [
-    '127.0.0.1',        # localhost
-]
-static_ips = global_client + EU_client + NA_client + Asia_client + other
 
 init()  # colorama initialisation
 s = scheduler(time, sleep)
@@ -49,10 +45,11 @@ previous_ip = 0
 current_game_ip = 0
 previous_time = 0
 def print_ip():
-    s.enter(update_interval, 1, print_ip)
+    s.enter(update_interval, 1, print_ip)   # run this function every update_interval
     d2r_pid = 0
+    # find D2R process
     for proc in psutil.process_iter():
-        if proc.name() == process_name:
+        if proc.name() == 'D2R.exe':
             d2r_pid = proc.pid
             break
     if d2r_pid:
@@ -69,14 +66,15 @@ def print_ip():
             ip = c.raddr.ip
             if(ip in EU_client):
                 region = 'EU'
-            if(ip in NA_client):
+            elif(ip in NA_client):
                 region = 'NA'
-            if(ip in Asia_client):
+            elif(ip in Asia_client):
                 region = 'Asia'
-            if(ip not in static_ips):
+            elif(ip not in global_client):
                 current_game_ip = ip
     if(current_game_ip!=previous_ip):
-        # we've found a new game ip, log it to file and console
+        # found a new game ip, log it
+        print(' '*44, end="\r", flush=True) #clear line
         logging.info('{}, {}'.format(region, current_game_ip))
         previous_ip = current_game_ip
         previous_time = time()
@@ -92,5 +90,5 @@ s.enter(0, 1, print_ip)
 try:
     s.run()
 except KeyboardInterrupt:
-    print()
+    print() # newline on exit
     pass
