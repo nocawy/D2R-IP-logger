@@ -31,7 +31,7 @@ If you don't want any logfiles created then modify the code, the instructions ar
 ## How it works
 
 The script in essence works the same way as `netstat`, [TCPView](https://docs.microsoft.com/en-us/sysinternals/downloads/tcpview) or `Resource Monitor` (a built-in Windows tool).  
-It asks your operating system what TCP connections are open by which processes using a standard Python library `psutil`. It doesn't require admin rights, doesn't inject or modify anything.
+It asks your operating system what TCP connections are open by which processes using a standard Python library `psutil`. It doesn't require admin rights, doesn't inject or modify anything, doesn't break TOS.
 
 ## Other software
 
