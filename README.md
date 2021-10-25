@@ -7,7 +7,8 @@ Useful for hunting Diablo Clone, or data collection.
 ![](https://i.imgur.com/3hjxBHn.png)
 
 ## How to install
-If you don't have Python installed yet, install it from https://www.python.org/downloads/
+If you don't have Python installed yet, install it from https://www.python.org/downloads/  
+On Windows during installation select "Add Python to PATH".
 
 Download the [D2R_ip.py](https://github.com/nocawy/D2R-IP-logger/blob/master/D2R_ip.py?raw=true) file.
 
