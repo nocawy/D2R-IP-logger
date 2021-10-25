@@ -1,2 +1,5 @@
 .vscode
 *.log
+*.spec
+build
+__pycache__
