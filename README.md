@@ -7,7 +7,12 @@ Useful for hunting Diablo Clone, or data collection.
 ![](https://i.imgur.com/3hjxBHn.png)
 
 ## How to install
-If you don't have Python installed yet, install it from https://www.python.org/downloads/
+If you don't have Python installed yet, install it from https://www.python.org/downloads/  
+On Windows during installation select "Add Python to PATH".
+
+Install required Python libraries, by openning Command Prompt and typing:  
+`pip install psutil`  
+`pip install colorama`
 
 Download the [D2R_ip.py](https://github.com/nocawy/D2R-IP-logger/blob/master/D2R_ip.py?raw=true) file.
 
@@ -31,7 +36,7 @@ If you don't want any logfiles created then modify the code, the instructions ar
 ## How it works
 
 The script in essence works the same way as `netstat`, [TCPView](https://docs.microsoft.com/en-us/sysinternals/downloads/tcpview) or `Resource Monitor` (a built-in Windows tool).  
-It asks your operating system what TCP connections are open by which processes using a standard Python library `psutil`. It doesn't require admin rights, doesn't inject or modify anything.
+It asks your operating system what TCP connections are open by which processes using a standard Python library `psutil`. It doesn't require admin rights, doesn't inject or modify anything, doesn't break TOS.
 
 ## Other software
 
