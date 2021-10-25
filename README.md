@@ -7,6 +7,9 @@ Useful for hunting Diablo Clone, or data collection.
 ![](https://i.imgur.com/3hjxBHn.png)
 
 ## How to install
+A compiled version for Windows is included in the [dist](https://github.com/nocawy/D2R-IP-logger/tree/master/dist) folder, you can download it here: [D2R_ip.exe](https://github.com/nocawy/D2R-IP-logger/raw/master/dist/D2R_ip.exe)  
+however I encourage you to run the [D2R_ip.py](https://github.com/nocawy/D2R-IP-logger/blob/master/D2R_ip.py?raw=true) script itself by following the steps below:  
+
 If you don't have Python installed yet, install it from https://www.python.org/downloads/  
 On Windows during installation select "Add Python to PATH".
 
