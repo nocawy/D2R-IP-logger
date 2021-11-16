@@ -1,5 +1,8 @@
 .vscode
 *.log
 *.spec
-build
 __pycache__
+build
+dist
+logs
+*.ipynb*
