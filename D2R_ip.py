@@ -7,7 +7,7 @@ from colorama import init, Fore, Style
 from sched import scheduler
 from math import floor
 
-update_interval = 1     # refresh rate in seconds; setting lower than 1 might be pointless because the process of checking connections takes close to 1s
+update_interval = 0.1     # refresh rate in seconds
 logfile = 'D2R_ip_{}.log'.format(strftime('%Y-%m-%d'))
 datetime_format = '%Y-%m-%d %H:%M:%S'
 
@@ -50,18 +50,20 @@ if len(sys.argv) >= 2:
     print('Hunting for ip: ' + Fore.LIGHTRED_EX + sys.argv[1] + Style.RESET_ALL)
     hunting_ip = sys.argv[1]
 
+def find_procs_by_name(name):
+    for p in psutil.process_iter(['name']):
+        if p.info['name'] == name:
+            return p
+    return 0
+p = find_procs_by_name('D2R.exe')
+
 def print_ip():
     s.enter(update_interval, 1, print_ip)   # run this function every update_interval
-    d2r_pid = 0
-    # find D2R process
-    for proc in psutil.process_iter():
-        if proc.name() == 'D2R.exe':
-            d2r_pid = proc.pid
-            break
-    if d2r_pid:
-        p = psutil.Process(d2r_pid)
-    else:   
-        # if game is not running
+    global p
+    if p==0 or p.is_running()==False:
+        p = find_procs_by_name('D2R.exe')
+    if p==0:
+        print("game is not running", end="\r")
         return
     global previous_ip
     global current_game_ip
