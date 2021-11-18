@@ -46,7 +46,7 @@ In the last line a clock is displayed, followed by the number of seconds that ha
 The logfiles appear in the same folder where the program is located, with filenames `D2R_ip_*.log` where `*` is today's date.  
 If you don't want any logfiles created then modify the code, the instructions are in comments.
 
-When `Diablo II: Resurrected` is launched and connects to battle.net it begins opening and closing connections to multiple IPs for about 20 seconds. The script will display some or most of them. If you create or join a game during that period, wait until no new IPs appear, then the last (most recent) one will be your current game's IP.
+When `Diablo II: Resurrected` is launched and connects to battle.net it begins opening and closing connections to multiple IPs for about 20 seconds. The script might display some of them. If you create or join a game during that period, wait until no new IPs appear, the last (most recent) one will be your current game's IP.
 
 Next to region a number is displayed, e.g. `Asia,79` or `Europe,180`, associated with what some call a *subregion* or a different *lobby*. When `Diablo II: Resurrected` is launched it connects to one of the two possible addresses for each region:
 * Americas:
