@@ -20,14 +20,14 @@ logging.basicConfig(
     ]
 )
 
-constant_ips = [
+constant_ips = {
     '24.105.29.76',     # always open
     '34.117.122.6',     # always open
     '127.0.0.1',        # localhost
     '137.221.105.152',  # Americas lobby
     '37.244.54.10',     # Europe lobby
     '117.52.35.45',     # Asia lobby
-]
+}
 # regions = [
 #     '137.221.106.88',   # Americas
 #     '137.221.106.188',  # Americas
@@ -40,12 +40,11 @@ constant_ips = [
 init()  # colorama initialisation
 s = scheduler(time, sleep)
 
-previous_ip = 0
-current_game_ip = 0
+previous_ips = set()
 previous_time = time()
 hunting_ip=''
 
-print("D2R IP Logger started. To exit press CTRL+C")
+print("D2R IP logger started. To exit press CTRL+C")
 if len(sys.argv) >= 2:
     print('Hunting for ip: ' + Fore.LIGHTRED_EX + sys.argv[1] + Style.RESET_ALL)
     hunting_ip = sys.argv[1]
@@ -57,6 +56,24 @@ def find_procs_by_name(name):
     return 0
 p = find_procs_by_name('D2R.exe')
 
+# def find_region(p):
+#     for c in p.connections('tcp'):
+#         if (c.raddr):
+#             ip = c.raddr.ip
+#             if(ip == '37.244.28.80'):
+#                 return 'Europe', '80'
+#             if(ip == '37.244.28.180'):
+#                 return 'Europe', '180'
+#             if(ip == '137.221.106.88'):
+#                 return 'Americas', '88'
+#             if(ip == '137.221.106.188'):
+#                 return 'Americas', '188'
+#             if(ip == '117.52.35.79'):
+#                 return 'Asia', '79'
+#             if(ip == '117.52.35.179'):
+#                 return 'Asia', '179'
+#     return '?','?'
+
 def print_ip():
     s.enter(update_interval, 1, print_ip)   # run this function every update_interval
     global p
@@ -65,44 +82,39 @@ def print_ip():
     if p==0:
         print("game is not running", end="\r")
         return
-    global previous_ip
-    global current_game_ip
+    global previous_ips
     global previous_time
     region = '?'
     subregion = '?'
+    open_ips = set()
     for c in p.connections('tcp'):
         if (c.raddr):
             ip = c.raddr.ip
             if(ip == '37.244.28.80'):
-                region = 'Europe'
-                subregion = '80'
+                region,subregion = 'Europe','80'
             elif(ip == '37.244.28.180'):
-                region = 'Europe'
-                subregion = '180'
+                region,subregion = 'Europe','180'
             elif(ip == '137.221.106.88'):
-                region = 'Americas'
-                subregion = '88'
+                region,subregion = 'Americas','88'
             elif(ip == '137.221.106.188'):
-                region = 'Americas'
-                subregion = '188'
+                region,subregion = 'Americas','188'
             elif(ip == '117.52.35.79'):
-                region = 'Asia'
-                subregion = '79'
+                region,subregion = 'Asia','79'
             elif(ip == '117.52.35.179'):
-                region = 'Asia'
-                subregion = '179'
+                region,subregion = 'Asia','179'
             elif(ip not in constant_ips):
-                current_game_ip = ip
-    if(current_game_ip!=previous_ip):
+                open_ips.add((ip, c.status))
+    if len(open_ips) == 1:
         # found a new game ip, log it
-        print(' '*44, end="\r", flush=True) #clear line
-        if current_game_ip == hunting_ip:
-            print(Fore.LIGHTRED_EX, end="\r", flush=True)
-        logging.info('{},{}, {}'.format(region, subregion, current_game_ip))
-        if current_game_ip == hunting_ip:
-            print(Style.RESET_ALL, end="\r", flush=True)
-        previous_ip = current_game_ip
-        previous_time = time()
+        for current_game_ip, status in (open_ips-previous_ips):
+            print(' '*44, end="\r", flush=True) #clear line
+            if current_game_ip == hunting_ip:
+                print(Fore.LIGHTRED_EX, end="\r", flush=True)
+            logging.info('{},{}, {}, {}'.format(region, subregion, current_game_ip, status))
+            if current_game_ip == hunting_ip:
+                print(Style.RESET_ALL, end="\r", flush=True)
+            previous_ips = open_ips.copy()
+            previous_time = time()
     # display clock and seconds passed since last entry
     print(datetime.now().strftime(datetime_format)+", "+str(floor(time()-previous_time)), end="\r", flush=True)
 
