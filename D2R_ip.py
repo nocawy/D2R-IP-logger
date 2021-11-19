@@ -39,7 +39,6 @@ constant_ips = {
 
 init()  # colorama initialisation
 s = scheduler(time, sleep)
-
 previous_ips = set()
 previous_time = time()
 hunting_ip=''
@@ -56,24 +55,6 @@ def find_procs_by_name(name):
     return 0
 p = find_procs_by_name('D2R.exe')
 
-# def find_region(p):
-#     for c in p.connections('tcp'):
-#         if (c.raddr):
-#             ip = c.raddr.ip
-#             if(ip == '37.244.28.80'):
-#                 return 'Europe', '80'
-#             if(ip == '37.244.28.180'):
-#                 return 'Europe', '180'
-#             if(ip == '137.221.106.88'):
-#                 return 'Americas', '88'
-#             if(ip == '137.221.106.188'):
-#                 return 'Americas', '188'
-#             if(ip == '117.52.35.79'):
-#                 return 'Asia', '79'
-#             if(ip == '117.52.35.179'):
-#                 return 'Asia', '179'
-#     return '?','?'
-
 def print_ip():
     s.enter(update_interval, 1, print_ip)   # run this function every update_interval
     global p
@@ -82,10 +63,7 @@ def print_ip():
     if p==0:
         print("game is not running", end="\r")
         return
-    global previous_ips
-    global previous_time
-    region = '?'
-    subregion = '?'
+    region,subregion = '?','?'
     open_ips = set()
     for c in p.connections('tcp'):
         if (c.raddr):
@@ -104,13 +82,15 @@ def print_ip():
                 region,subregion = 'Asia','179'
             elif(ip not in constant_ips):
                 open_ips.add((ip, c.status))
+    global previous_ips
+    global previous_time
     if len(open_ips) == 1:
         # found a new game ip, log it
         for current_game_ip, status in (open_ips-previous_ips):
             print(' '*44, end="\r", flush=True) #clear line
             if current_game_ip == hunting_ip:
                 print(Fore.LIGHTRED_EX, end="\r", flush=True)
-            logging.info('{},{}, {}, {}'.format(region, subregion, current_game_ip, status))
+            logging.info('{},{}, {}, {}'.format(region,subregion, current_game_ip, status))
             if current_game_ip == hunting_ip:
                 print(Style.RESET_ALL, end="\r", flush=True)
             previous_ips = open_ips.copy()
