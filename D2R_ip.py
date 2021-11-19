@@ -66,6 +66,8 @@ def print_ip():
     region,subregion = '?','?'
     open_ips = set()
     for c in p.connections('tcp'):
+        if (p.is_running()==False):
+            return
         if (c.raddr):
             ip = c.raddr.ip
             if(ip == '37.244.28.80'):
