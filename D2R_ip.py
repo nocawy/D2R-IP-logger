@@ -65,25 +65,26 @@ def print_ip():
         return
     region,subregion = '?','?'
     open_ips = set()
-    for c in p.connections('tcp'):
-        if (p.is_running()==False):
-            return
-        if (c.raddr):
-            ip = c.raddr.ip
-            if(ip == '37.244.28.80'):
-                region,subregion = 'Europe','80'
-            elif(ip == '37.244.28.180'):
-                region,subregion = 'Europe','180'
-            elif(ip == '137.221.106.88'):
-                region,subregion = 'Americas','88'
-            elif(ip == '137.221.106.188'):
-                region,subregion = 'Americas','188'
-            elif(ip == '117.52.35.79'):
-                region,subregion = 'Asia','79'
-            elif(ip == '117.52.35.179'):
-                region,subregion = 'Asia','179'
-            elif(ip not in constant_ips):
-                open_ips.add((ip, c.status))
+    try:
+        for c in p.connections('tcp'):
+            if (c.raddr):
+                ip = c.raddr.ip
+                if(ip == '37.244.28.80'):
+                    region,subregion = 'Europe','80'
+                elif(ip == '37.244.28.180'):
+                    region,subregion = 'Europe','180'
+                elif(ip == '137.221.106.88'):
+                    region,subregion = 'Americas','88'
+                elif(ip == '137.221.106.188'):
+                    region,subregion = 'Americas','188'
+                elif(ip == '117.52.35.79'):
+                    region,subregion = 'Asia','79'
+                elif(ip == '117.52.35.179'):
+                    region,subregion = 'Asia','179'
+                elif(ip not in constant_ips):
+                    open_ips.add((ip, c.status))
+    except:
+        pass    # ignore "process no longer exists" errors
     global previous_ips
     global previous_time
     if len(open_ips) == 1:
